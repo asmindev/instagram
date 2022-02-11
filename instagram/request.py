@@ -7,8 +7,9 @@ from .endpoints import Instagram
 instagram = Instagram()
 
 
+@dataclass
 class Session:
-    NAME: Text = ""
+    FULLNAME: Text = ""
     USER_ID: int = 0
     USERNAME: Text = ""
     PROFILE_PIC_URL: Text = ""
@@ -18,6 +19,9 @@ class Session:
     FOLLOWERS: int = 0
 
     def __init__(self, user_agent: Text = None):
+        """
+        user_agent: user agent to use for this session
+        """
         self.is_logged: bool = False
         self.__use_cookie: bool = False
         self.__use_password: bool = False
@@ -70,11 +74,12 @@ class Session:
         elif self.__use_cookie:
             response = self.session.get(instagram.BASE_URL)
             if "prefill_phone_number" not in response.text:
+                self.is_logged = True
                 return dict(success=True)
             else:
                 return dict(success=False)
         else:
-            raise ValueError("You gotta set method login")
+            raise ValueError("You has to set method login")
 
     @property
     def cookies(self):
