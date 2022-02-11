@@ -2,9 +2,9 @@ from dataclasses import dataclass
 from typing import Text, Dict
 import time
 import requests
-from .endpoints import Instagram
+from .endpoints import endpoints
 
-instagram = Instagram()
+instagram = endpoints()
 
 
 @dataclass
@@ -22,7 +22,8 @@ class Session:
         """
         user_agent: user agent to use for this session
         """
-        self.is_logged: bool = False
+        self.session = requests.Session()
+        self.__is_logged: bool = False
         self.__use_cookie: bool = False
         self.__use_password: bool = False
         self.__username: Text = ""
@@ -65,7 +66,7 @@ class Session:
                     self.session.headers.update(dict(cookie=self.__cookie))
                     response = login.json()
                     if response["authenticated"]:
-                        self.is_logged = True
+                        self.__is_logged = True
                 resp: Dict = login.json()
                 resp.update(dict(cookie=self.__cookie))
                 return resp
@@ -74,12 +75,16 @@ class Session:
         elif self.__use_cookie:
             response = self.session.get(instagram.BASE_URL)
             if "prefill_phone_number" not in response.text:
-                self.is_logged = True
+                self.__is_logged = True
                 return dict(success=True)
             else:
                 return dict(success=False)
         else:
             raise ValueError("You has to set method login")
+
+    @property
+    def is_logged(self):
+        return self.__is_logged
 
     @property
     def cookies(self):
@@ -91,8 +96,7 @@ class Session:
             if "csrftoken" not in cookies.lower():
                 raise ValueError(f"invalid cookies: {cookies}")
             else:
-                if not self.is_logged:
-                    self.session = requests.Session()
+                if not self.__is_logged:
                     self.__use_cookie = True
                     self.__cookie = cookies
                     data = {
@@ -120,8 +124,7 @@ class Session:
 
     def set_credentials(self, username: Text, password: Text):
         if not self.__use_cookie:
-            if not self.is_logged:
-                self.session = requests.Session()
+            if not self.__is_logged:
                 self.__use_password = True
                 self.__username = username
                 self.__password = password
@@ -130,6 +133,7 @@ class Session:
                         "User-Agent": self.__user_agent,
                     }
                 )
+                return "credentials setting up"
             else:
                 raise ValueError("You has logged")
 

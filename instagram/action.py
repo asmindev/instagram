@@ -1,21 +1,21 @@
-from .endpoints import Instagram
+from .endpoints import endpoints
 from typing import Text, Any
 import urllib.parse as parse
 
 
-def follow(username: Text):
-    url_to_follow = Instagram.FOLLOW % username
+def follow_url(user_id: Text):
+    url_to_follow = endpoints.FOLLOW % user_id
     return url_to_follow
 
 
-def unfollow(username: Text):
-    url_to_unfollow = Instagram.UNFOLLOW % username
+def unfollow_url(user_id: Text):
+    url_to_unfollow = endpoints.UNFOLLOW % user_id
     return url_to_unfollow
 
 
-def like(media_id: Any):
-    return Instagram.LIKE % parse.quote_plus(str(media_id))
+def like_url(media_id: Any):
+    return endpoints.LIKE % parse.quote_plus(str(media_id))
 
 
-def unlike(media_id: Any):
-    return Instagram.UNLIKE % parse.quote_plus(str(media_id))
+def unlike_url(media_id: Any):
+    return endpoints.UNLIKE % parse.quote_plus(str(media_id))
