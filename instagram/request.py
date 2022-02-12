@@ -22,7 +22,7 @@ class Session:
         """
         user_agent: user agent to use for this session
         """
-        self.session = requests.Session()
+        self.requests = requests.Session()
         self.__is_logged: bool = False
         self.__use_cookie: bool = False
         self.__use_password: bool = False
@@ -35,10 +35,10 @@ class Session:
 
     def login(self):
         if self.__use_password:
-            response = self.session.get(instagram.BASE_URL + "/")
+            response = self.requests.get(instagram.BASE_URL + "/")
             csrf = instagram.csrftoken(response.text)
-            mid = self.session.get(instagram.MID).text
-            self.session.headers.update(
+            mid = self.requests.get(instagram.MID).text
+            self.requests.headers.update(
                 {
                     "cookie": f"ig_cb=1;csrftoken={csrf};mid={mid};",
                     "x-csrftoken": csrf,
@@ -48,14 +48,14 @@ class Session:
                 "username": self.__username,
                 "enc_password": f"#PWD_INSTAGRAM_BROWSER:0:{int(time.time())}:{self.__password}",
             }
-            login = self.session.post(
+            login = self.requests.post(
                 instagram.LOGIN_URL, data=payload, allow_redirects=True
             )
             if login.status_code == 200:
                 csrftoken = login.cookies.get("csrftoken")
                 if csrftoken:
                     login.cookies.update(dict(mid=mid))
-                    self.session.headers.update({"x-csrftoken": csrftoken})
+                    self.requests.headers.update({"x-csrftoken": csrftoken})
                     cookie = ";".join(
                         [
                             f"{key}={value}"
@@ -63,7 +63,7 @@ class Session:
                         ]
                     )
                     self.__cookie = cookie
-                    self.session.headers.update(dict(cookie=self.__cookie))
+                    self.requests.headers.update(dict(cookie=self.__cookie))
                     response = login.json()
                     if response["authenticated"]:
                         self.__is_logged = True
@@ -73,7 +73,7 @@ class Session:
             else:
                 return dict(status_code=login.status_code, messages="uknown error")
         elif self.__use_cookie:
-            response = self.session.get(instagram.BASE_URL)
+            response = self.requests.get(instagram.BASE_URL)
             if "prefill_phone_number" not in response.text:
                 self.__is_logged = True
                 return dict(success=True)
@@ -108,8 +108,8 @@ class Session:
                             )
                         )
                     }
-                    self.session.cookies.update(dict(cookie=self.__cookie))
-                    self.session.headers.update(
+                    self.requests.cookies.update(dict(cookie=self.__cookie))
+                    self.requests.headers.update(
                         {
                             "x-csrftoken": data["csrftoken"],
                             "cookie": self.__cookie,
@@ -128,7 +128,7 @@ class Session:
                 self.__use_password = True
                 self.__username = username
                 self.__password = password
-                self.session.headers.update(
+                self.requests.headers.update(
                     {
                         "User-Agent": self.__user_agent,
                     }

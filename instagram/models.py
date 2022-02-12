@@ -66,3 +66,17 @@ class Models:
             )
             url = endpoints.GRAPHQL + "?" + parse.urlencode(params)
         return url
+
+    def generate_url_get_story(self, user_id: Text):
+        variables = {
+            "reel_ids": [user_id],
+            "tag_names": [],
+            "location_ids": [],
+            "highlight_reel_ids": [],
+            "precomposed_overlay": False,
+            "show_story_viewer_list": True,
+            "story_viewer_fetch_count": 50,
+            "story_viewer_cursor": "",
+        }
+        result = parse.quote_plus(json.dumps(variables, separators=(",", ":")))
+        return endpoints.STORY % result

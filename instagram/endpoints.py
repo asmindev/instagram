@@ -10,13 +10,14 @@ class endpoints:
     BASE_URL: Text = "https://instagram.com"
     LOGIN_URL: Text = BASE_URL + "/accounts/login/ajax/"
     ACCOUNT_JSON_INFO = BASE_URL + "/%s/channel/?__a=1"
-    MEDIA_JSON_INFO = BASE_URL + "/p/%s/channel/?__a=1"
+    MEDIA_JSON_INFO = BASE_URL + "/p/%s/?__a=1"
     MID: Text = BASE_URL + "/web/__mid/"
     FOLLOW: Text = BASE_URL + "/web/friendships/%s/follow/"
     UNFOLLOW: Text = BASE_URL + "/web/friendships/%s/unfollow/"
     LIKE: Text = BASE_URL + "/web/likes/%s/like/"
     UNLIKE: Text = BASE_URL + "/web/likes/%s/unlike/"
     GRAPHQL: Text = BASE_URL + "/graphql/query/"
+    STORY: Text = GRAPHQL + "?query_hash=de8017ee0a7c9c45ec4260733d81ea31&variables=%s"
     FOLLOWERS_FIRST: Text = (
         GRAPHQL + "?query_hash=c76146de99bb02f6415203be841dd25a&variables=%s"
     )
