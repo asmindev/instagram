@@ -35,12 +35,12 @@ class Session:
 
     def login(self):
         if self.__use_password:
-            response = self.requests.get(instagram.BASE_URL + "/")
+            response = self.requests.get(instagram.BASE_URL)
             csrf = instagram.csrftoken(response.text)
             mid = self.requests.get(instagram.MID).text
             self.requests.headers.update(
                 {
-                    "cookie": f"ig_cb=1;csrftoken={csrf};mid={mid};",
+                    "cookie": f"ig_pr=2;ig_cb=1;csrftoken={csrf};mid={mid};",
                     "x-csrftoken": csrf,
                 }
             )
@@ -71,7 +71,11 @@ class Session:
                 resp.update(dict(cookie=self.__cookie))
                 return resp
             else:
-                return dict(status_code=login.status_code, messages="uknown error")
+                print(login.headers)
+                return dict(
+                    status_code=login.status_code,
+                    messages="uknown error",
+                )
         elif self.__use_cookie:
             response = self.requests.get(instagram.BASE_URL)
             if "prefill_phone_number" not in response.text:
@@ -108,7 +112,7 @@ class Session:
                             )
                         )
                     }
-                    self.requests.cookies.update(dict(cookie=self.__cookie))
+                    self.requests.cookies.update(data)
                     self.requests.headers.update(
                         {
                             "x-csrftoken": data["csrftoken"],

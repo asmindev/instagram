@@ -48,3 +48,30 @@ def stories_details(content: Dict, story_id: Text = None):
         return response
     else:
         return response
+
+
+def reels_details(content: Dict, less=True):
+    media = content.get("shortcode_media")
+    if media:
+        if less:
+            owner: Text = media["owner"]
+            caption = media["edge_media_to_caption"]["edges"]
+            video_duration: Text = media["video_duration"]
+            thumbnail_src: Text = media["thumbnail_src"]
+            if type(caption) == list and len(caption):
+                caption = caption[0]["node"]["text"]
+            else:
+                caption = None
+            video_url: Text = media["video_url"]
+            return dict(
+                video_duration=video_duration,
+                thumbnail_src=thumbnail_src,
+                owner=owner,
+                edge_media_to_caption=media["edge_media_to_caption"],
+                video_url=video_url,
+                audio=media["clips_music_attribution_info"],
+            )
+        else:
+            return media
+    else:
+        return content
