@@ -19,3 +19,12 @@ def like_url(media_id: Any):
 
 def unlike_url(media_id: Any):
     return endpoints.UNLIKE % parse.quote_plus(str(media_id))
+
+
+def reels_url(link: Text):
+    path = parse.urlparse(link).path
+    if path and path.startswith("/reel"):
+        paths = path.split("/")
+        return endpoints.REELS % paths[2]
+    else:
+        return link

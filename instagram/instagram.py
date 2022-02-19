@@ -1,4 +1,4 @@
-from typing import Any, List, Text, Dict
+from typing import Any, Text, Dict
 from .request import Session
 from .endpoints import endpoints
 from . import action
@@ -13,7 +13,6 @@ class Instagram(Session):
 
     def __init__(self, user_agent: Text | Any = None):
         super().__init__(user_agent=user_agent)
-        Instagram.FOLLOWERS = 10
         self.__models = Models()
 
     def __override(self, result: Dict):
@@ -225,7 +224,7 @@ class Instagram(Session):
             username, story_id = re.findall(r"stories/(.*?)/(\d+)", link)[0]
         if username:
             user_id = self.get_user_info(username)["id"]
-            url = self.__models.generate_url_get_story(user_id)
+            url = self.__models.generate_url_get_stories(user_id)
             response = self.requests.get(url)
             if response.status_code == Instagram.HTTP_OK:
                 result = parse.stories_details(
@@ -245,10 +244,8 @@ class Instagram(Session):
         less: bool = More information. default `less: True`
         rtype: Dict
         """
+        link = action.reels_url(link)
         response = self.requests.get(link)
         if response.status_code == Instagram.HTTP_OK:
-            graphql: List = re.findall(r'({"graphql":.*?)\);', response.text)
-            if graphql:
-                result = json.loads(graphql[0])
-                return parse.reels_details(result, less=less)
+            return parse.reels_details(response.json(), less=less)
         return parse.uknown(response.status_code)

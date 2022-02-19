@@ -17,6 +17,7 @@ class endpoints:
     LIKE: Text = BASE_URL + "/web/likes/%s/like/"
     UNLIKE: Text = BASE_URL + "/web/likes/%s/unlike/"
     GRAPHQL: Text = BASE_URL + "/graphql/query/"
+    REELS: Text = BASE_URL + "/reel/%s/?__a=1"
     STORY: Text = GRAPHQL + "?query_hash=de8017ee0a7c9c45ec4260733d81ea31&variables=%s"
     FOLLOWERS_FIRST: Text = (
         GRAPHQL + "?query_hash=c76146de99bb02f6415203be841dd25a&variables=%s"

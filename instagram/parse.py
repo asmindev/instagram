@@ -1,4 +1,4 @@
-from typing import Dict, List, Text
+from typing import Dict, Text
 
 
 def uknown(status_code, **kwargs):
@@ -51,25 +51,25 @@ def stories_details(content: Dict, story_id: Text = None):
 
 
 def reels_details(content: Dict, less=True):
-    media = content.get("shortcode_media")
-    if media:
+    items = content.get("items")
+    if items:
+        media = items[0]
         if less:
-            owner: Text = media["owner"]
-            caption = media["edge_media_to_caption"]["edges"]
+            user: Text = media["user"]
+            caption = media["caption"]
             video_duration: Text = media["video_duration"]
-            thumbnail_src: Text = media["thumbnail_src"]
-            if type(caption) == list and len(caption):
-                caption = caption[0]["node"]["text"]
-            else:
-                caption = None
-            video_url: Text = media["video_url"]
+            video_url: Text = media["video_versions"]
+            audio: Dict = media["clips_metadata"]
+            if audio["music_info"]:
+                audio["music_info"]["music_asset_info"].pop("dash_manifest")
+            if audio["original_sound_info"]:
+                audio["original_sound_info"].pop("dash_manifest")
             return dict(
                 video_duration=video_duration,
-                thumbnail_src=thumbnail_src,
-                owner=owner,
-                edge_media_to_caption=media["edge_media_to_caption"],
+                user=user,
+                caption=caption,
                 video_url=video_url,
-                audio=media["clips_music_attribution_info"],
+                audio=audio,
             )
         else:
             return media

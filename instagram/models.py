@@ -67,7 +67,7 @@ class Models:
             url = endpoints.GRAPHQL + "?" + parse.urlencode(params)
         return url
 
-    def generate_url_get_story(self, user_id: Text):
+    def generate_url_get_stories(self, user_id: Text):
         variables = {
             "reel_ids": [user_id],
             "tag_names": [],
