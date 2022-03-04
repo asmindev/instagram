@@ -46,7 +46,8 @@ class Session:
             )
             payload = {
                 "username": self.__username,
-                "enc_password": f"#PWD_INSTAGRAM_BROWSER:0:{int(time.time())}:{self.__password}",
+                "enc_password": "#PWD_INSTAGRAM_BROWSER"
+                f":0:{int(time.time())}:{self.__password}",
             }
             login = self.requests.post(
                 instagram.LOGIN_URL, data=payload, allow_redirects=True
@@ -71,7 +72,6 @@ class Session:
                 resp.update(dict(cookie=self.__cookie))
                 return resp
             else:
-                print(login.headers)
                 return dict(
                     status_code=login.status_code,
                     messages="uknown error",
@@ -143,3 +143,6 @@ class Session:
 
         else:
             raise ValueError("You has been login use cookie")
+
+    def set_headers(self, **kwargs):
+        self.requests.headers.update(kwargs)

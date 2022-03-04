@@ -65,8 +65,7 @@ class Instagram(Session):
         post_id: Text = Instagram post id
         rtype: json data type
         """
-        response = self.requests.post(
-            action.like_url(media_id=post_id), data={})
+        response = self.requests.post(action.like_url(media_id=post_id), data={})
         if response.status_code == Instagram.HTTP_OK:
             return response.json()
         else:
@@ -80,8 +79,7 @@ class Instagram(Session):
         post_id: Text = Instagram post id
         rtype: json data type
         """
-        response = self.requests.post(
-            action.unlike_url(media_id=post_id), data={})
+        response = self.requests.post(action.unlike_url(media_id=post_id), data={})
         if response.status_code == Instagram.HTTP_OK:
             return response.json()
         else:
@@ -164,11 +162,9 @@ class Instagram(Session):
         """
         response = self.requests.get(endpoints.BASE_URL)
         if response.status_code == Instagram.HTTP_OK:
-            graphql = re.findall(
-                r"window._sharedData = (.+);</script>", response.text)
+            graphql = re.findall(r"window._sharedData = (.+);</script>", response.text)
             if graphql:
-                username = json.loads(graphql[0])[
-                    "config"]["viewer"]["username"]
+                username = json.loads(graphql[0])["config"]["viewer"]["username"]
                 result = self.get_user_info(username)
                 if result.get("id"):
                     self.__override(result)
@@ -218,8 +214,7 @@ class Instagram(Session):
         story_id: Text = ""
         status_code = Instagram.HTTP_OK
         if not username and not link:
-            raise TypeError(
-                "get_stories() missing one arguments: username or link")
+            raise TypeError("get_stories() missing one arguments: username or link")
         if link:
             username, story_id = re.findall(r"stories/(.*?)/(\d+)", link)[0]
         if username:
@@ -227,8 +222,7 @@ class Instagram(Session):
             url = self.__models.generate_url_get_stories(user_id)
             response = self.requests.get(url)
             if response.status_code == Instagram.HTTP_OK:
-                result = parse.stories_details(
-                    response.json(), story_id=story_id)
+                result = parse.stories_details(response.json(), story_id=story_id)
                 return result
             else:
                 status_code = response.status_code
