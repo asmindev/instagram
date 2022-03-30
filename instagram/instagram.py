@@ -1,4 +1,5 @@
 from typing import Any, Text, Dict
+import validators
 from .request import Session
 from .endpoints import endpoints
 from . import action
@@ -202,7 +203,7 @@ class Instagram(Session):
         else:
             return parse.uknown(response.status_code)
 
-    def get_stories(self, username: Text = None, link: Text = None):
+    def get_stories(self, target: Text):
         """
         Get details information about story.
         ---------------------------------------
@@ -213,21 +214,17 @@ class Instagram(Session):
         """
         story_id: Text = ""
         status_code = Instagram.HTTP_OK
-        if not username and not link:
-            raise TypeError("get_stories() missing one arguments: username or link")
-        if link:
-            username, story_id = re.findall(r"stories/(.*?)/(\d+)", link)[0]
-        if username:
-            user_id = self.get_user_info(username)["id"]
-            url = self.__models.generate_url_get_stories(user_id)
-            response = self.requests.get(url)
-            if response.status_code == Instagram.HTTP_OK:
-                result = parse.stories_details(response.json(), story_id=story_id)
-                return result
-            else:
-                status_code = response.status_code
+        if validators.url(target):
+            target, story_id = re.findall(r"stories/(.*?)/(\d+)", target)[0]
+        user_id = self.get_user_info(target)["id"]
+        url = self.__models.generate_url_get_stories(user_id)
+        response = self.requests.get(url)
+        if response.status_code == Instagram.HTTP_OK:
+            result = parse.stories_details(response.json(), story_id=story_id)
+            return result
         else:
-            return parse.uknown(status_code, message="invalid username")
+            status_code = response.status_code
+        return parse.uknown(status_code, message="invalid username")
 
     def get_reel(self, link: Text, less=True):
         """

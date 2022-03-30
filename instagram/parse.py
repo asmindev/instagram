@@ -1,4 +1,4 @@
-from typing import Dict, Text
+from typing import Dict, Text, Any
 
 
 def uknown(status_code, **kwargs):
@@ -38,7 +38,7 @@ def details_user(content: Dict, less: bool = True) -> Dict:
         return user
 
 
-def stories_details(content: Dict, story_id: Text = None):
+def stories_details(content: Dict, story_id: Text | Any = None):
     response: Dict = content["data"]
     if response["reels_media"]:
         data = response["reels_media"][0]["items"]
